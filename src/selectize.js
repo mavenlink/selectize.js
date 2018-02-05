@@ -1,3 +1,7 @@
+/*
+ * Mavenlink modified. See git history for more information.
+ */
+
 var Selectize = function($input, settings) {
 	var key, i, n, dir, input, self = this;
 	input = $input[0];
