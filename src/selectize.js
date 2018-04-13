@@ -1776,9 +1776,13 @@ $.extend(Selectize.prototype, {
 
 		if (self.settings.mode === 'single' && self.items.length) {
 			self.hideInput();
-			setTimeout(function() {
+
+			// Do not trigger blur while inside a blur event,
+			// this fixes some weird tabbing behavior in FF and IE.
+			// See #1164
+			if (self.ignoreFocus) {
 				self.$control_input.blur(); // close keyboard on iOS
-			});
+			}
 		}
 
 		self.isOpen = false;
@@ -1799,7 +1803,7 @@ $.extend(Selectize.prototype, {
 		offset.top += $control.outerHeight(true);
 
 		this.$dropdown.css({
-			width : $control.outerWidth(),
+			width : $control[0].getBoundingClientRect().width,
 			top   : offset.top,
 			left  : offset.left
 		});
@@ -2078,6 +2082,11 @@ $.extend(Selectize.prototype, {
 
 		self.$control_input.removeData('grow');
 		self.$input.removeData('selectize');
+
+		if (--Selectize.count == 0 && Selectize.$testInput) {
+			Selectize.$testInput.remove();
+			Selectize.$testInput = undefined;
+		}
 
 		$(window).off(eventNS);
 		$(document).off(eventNS);
